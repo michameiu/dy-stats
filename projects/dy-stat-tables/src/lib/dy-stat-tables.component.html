@@ -1,7 +1,45 @@
-<p>
-    dy-stat-tables works!
+<hr class="my-12" />
+<div class="table-responsive">
+    <h2>{{name}} </h2><small>{{time$|async}}</small>
+    <sistch-stats-breadcrumb></sistch-stats-breadcrumb>
 
-    dadd
-</p>
+    <table class="table table-hover table-bordered caption" style="width:100%">
+        <thead class="thead-dark">
+            <tr>
+                <!-- <th *ngIf="canShowNumbering" class="table-header">#</th> -->
+                <th *ngFor="let header of tableHeaders$|async;let i = index" class="table-header">
+                    <!-- <app-mytd [columnConfig]="header.title" [isHeaderCell]=true></app-mytd> -->
+                    <!-- <span>{{header.title}}</span> -->
+                    <app-mytd [columnConfig]="header.title" [isHeaderCell]=true></app-mytd>
 
-<button (click)="onClick()">Test ROute</button>
+
+                </th>
+            </tr>
+        </thead>
+
+        <tbody *ngIf="(hasData$ |async) && !loading">
+            <tr *ngFor="let row of (results$|async);let j=index; ">
+                <!-- <th *ngIf="canShowNumbering">{{(j+1)+((pageSize$|async)*((page$|async)-1))}}</th> -->
+                <td (click)="drillDown(row,header)" *ngFor="let header of tableHeaders$|async; let j = index;">
+                    <!-- <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd> -->
+                    <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd>
+
+                    <!-- <span *ngIf="header.name=='value'"><a
+                            href="javascript:void(0)">{{getRowValue(row,header)}}</a></span>
+                    <span *ngIf="header.name!='value'">{{getRowValue(row,header)}}</span> -->
+                </td>
+            </tr>
+        </tbody>
+        <tbody *ngIf="loading">
+            <tr *ngFor="let dum of dummyData">
+                <th *ngIf="canShowNumbering"><span class="linear-background"></span></th>
+                <td *ngFor="let dum of tableHeaders$|async">
+                    <span class="linear-background"></span>
+                </td>
+            </tr>
+        </tbody>
+        <tbody *ngIf="!(hasData$ |async)">
+            <tr class="no-data-text">No data available</tr>
+        </tbody>
+    </table>
+</div>

@@ -61,6 +61,7 @@ export interface StatStateModel {
     selectedGrouping?: string,
     showAndFilterFields: string[] // Any other field that is not used to calculate the total stats
     groupings: DataGroupingModel[],
+    time: string,
     removedShowAndFilterHeaders?: TableHeaderModel[],
     drillDownSteps: string[] // Hierachial order of the groupings by name
 }

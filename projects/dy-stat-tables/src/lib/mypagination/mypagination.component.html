@@ -1,0 +1,32 @@
+<div class="d-flex justify-content-end">
+
+        <nav aria-label="Page navigation">
+                <ul *ngIf="isPaginationActive && isStandardPagination" class="pagination">
+                        <button (click)="scrollPage(-1)" [disabled]="!hasPrev" class="page-btn mx-2">Previous</button>
+                        <li class="page-item {{selectedPage==1?'active':''}}"><button (click)="selectPage(1)"
+                                        class="page-link  ">1</button></li>
+
+                        <li class="page-item" *ngIf="!isAtStart"><button class="page-link">...</button></li>
+
+                        <li *ngFor="let page of pages" class="page-item {{selectedPage==page?'active':''}}"><button
+                                        class="page-link" (click)="selectPage(page)">{{page}}</button>
+                        </li>
+
+                        <li class="page-item" *ngIf="!isAtEnd"><button class="page-link">...</button></li>
+
+                        <li class="page-item {{selectedPage==totalPages?'active':''}}"><button
+                                        (click)="selectPage(totalPages)" class="page-link  ">{{totalPages}}</button>
+                        </li>
+                        <button (click)="scrollPage(1)" [disabled]="!hasNext" class="page-btn">Next</button>
+                </ul>
+
+                <ul *ngIf="isPaginationActive && isCursorPagination" class="pagination">
+                        <button class="btn pgn-btn btn-primary btn-spacing" (click)="selectCursorUrl(resultsMeta.prev)"
+                                [disabled]="!hasPrev">Previous</button>
+                        <button (click)="selectCursorUrl(resultsMeta.next)" [disabled]="!hasNext"
+                        class="btn pgn-btn btn-primary btn-spacing">Next</button>
+                </ul>
+
+                <p *ngIf="isStandardPagination" class="mt-2">Showing {{currentPageRange}} of {{totalItems}} Items</p>
+        </nav>
+</div>

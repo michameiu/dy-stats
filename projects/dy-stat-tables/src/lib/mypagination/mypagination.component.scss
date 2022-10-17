@@ -1,0 +1,61 @@
+$primary: #2096f3;
+$accent: #7b1ff2;
+$primarygrey: #87798b;
+
+.page-item {
+    cursor: pointer;
+}
+.selectedPage .active .page-link .page-btn {
+    color: white;
+    background-color: $primary !important;
+}
+
+.page-item.active .page-link {
+    background-color: $primary;
+    border: 1px solid $primary;
+}
+
+.page-link {
+    color: $primarygrey;
+    margin: 0px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.btn-cursor {
+    background-color: $primary;
+    color: white;
+    margin: 0px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.page-btn {
+    border: 1px solid $primary;
+    color: $primary;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.pgn-btn {
+    color: $primary;
+    margin: 0px 10px;
+    font-size: 12px;
+    background-color: transparent;
+    border: 1px solid $primary;
+    border-radius: 5px;
+}
+
+.btn-spacing {
+    margin-right: 5px;
+}
+
+.btn:focus {
+    box-shadow: none;
+}

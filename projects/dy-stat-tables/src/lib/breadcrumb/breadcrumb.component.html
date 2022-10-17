@@ -1,0 +1,23 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li (click)="selectGroup(group)" *ngFor="let group of groupings$|async" class="breadcrumb-item "><a
+                href="javascript:void(0)">{{group.displayName}}</a></li>
+    </ol>
+</nav>
+<div>
+    <span *ngFor="let param of queryParams$|async"
+        class="badge badge-pill badge-primary text-primary">{{title(param.name)}}
+        ({{param.displayName}}) </span>
+</div>
+
+<div *ngFor="let header of headers$|async" class="form-check form-check-inline">
+    <input class="form-check-input" (change)="onChange($event,header)" type="checkbox" [attr.id]="header.name"
+        [checked]="header.active">
+    <label class="form-check-label" [attr.for]="header.name">{{title(header.name)}}</label>
+</div>
+
+
+<!-- class 3
+males 15 
+female 26 -->
+<!-- School County (Kajiado)School Sub County (Kajiado Central)School (Adams Academy) -->

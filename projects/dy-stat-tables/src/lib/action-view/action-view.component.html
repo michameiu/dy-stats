@@ -1,0 +1,52 @@
+<span [ngSwitch]="displayHiddenValue" class="action-view">
+
+    <button (click)="emitAction()" *ngSwitchCase="'P'" type="button" class="page-button btn-danger">
+        {{displayValue}}
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'C'" type="button" class="page-button btn-success btn-complete">
+        {{displayValue}} &nbsp;<i class="fas fa-check"></i>
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'TA'" type="button" class="page-button btn-primary">
+        {{displayValue}}
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'AT'" type="button" class="page-button btn-warning">
+        {{displayValue}}
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'IP'" type="button" class="page-button btn-warning">
+        {{displayValue}}
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'CBU'" type="button" class="page-button btn-secondary">
+        {{displayValue}} &nbsp;<i class="fas fa-times"></i>
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'Edit'" type="button" class="page-button edit-button btn-warning">
+        {{displayValue}} &nbsp;<i class="fa fa-edit"></i>
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="'Delete'" type="button" class="page-button delete-button btn-danger">
+        {{displayValue}} &nbsp;<i class="fa fa-trash-o"></i>
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="true" type="button" class="page-button btn-danger">
+        {{displayValue}} &nbsp;<i class="fas fa-power-off"></i>
+    </button>
+
+    <button (click)="emitAction()" *ngSwitchCase="false" type="button" class="page-button btn-secondary">
+        {{displayValue}} &nbsp;<i class="fas fa-power-off"></i>
+    </button>
+
+    <div *ngSwitchCase="'download'">
+        <a *ngIf="downloadUrl!=''" class="btn btn-sm {{downloadCssClass}} {{downloadUrl==''?'disabled':''}}"
+            [href]="downloadUrl" download>{{displayValue}}</a>
+    </div>
+
+
+
+    <button (click)="emitAction()" *ngSwitchDefault type="button" class="page-button btn-secondary">
+        {{displayValue}} </button>
+</span>

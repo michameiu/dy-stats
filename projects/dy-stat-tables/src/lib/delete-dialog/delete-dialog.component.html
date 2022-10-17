@@ -1,0 +1,23 @@
+<h1 class="dialog-title" mat-dialog-title>Confirm Delete</h1>
+<div class mat-dialog-content>
+  <p>Do you wish to delete id ?</p>
+</div>
+<div mat-dialog-actions>
+  <button class="btn btn-danger dialog-button btn-no-thanks" *ngIf="!isLoading && !hasErrors" mat-button
+    (click)="onNoClick()">No
+    Thanks</button>
+  <span *ngIf="isLoading && !hasErrors">Deleting...</span>
+  <button *ngIf="!isLoading && !hasErrors" class="btn btn-primary dialog-button" mat-button (click)="onDelete()"
+    cdkFocusInitial>Ok</button>
+
+
+  <!-- In case of any errors -->
+  <div *ngIf="!isLoading && hasErrors">
+    <span class="error-message">{{error}}
+    </span>
+    <br><br>
+    <button class="btn btn-danger dialog-button" (click)="onNoClick()"> Dismiss</button>
+  </div>
+
+
+</div>

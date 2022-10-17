@@ -1,0 +1,17 @@
+<div *ngIf="!isActions" [ngSwitch]="valueType">
+    <div *ngSwitchCase="'array'">
+        <ul>
+            <li *ngFor="let item of displayValue">{{item}}</li>
+        </ul>
+    </div>
+    <!-- <div *ngSwitchCase="'boolean'">
+        <mat-icon *ngIf="displayValue" color="primary">verified</mat-icon>
+        <mat-icon *ngIf="!displayValue" color="warn">assignment_late</mat-icon>
+    </div> -->
+    <div *ngSwitchDefault>{{displayValue}}</div>
+</div>
+
+<div *ngIf="isActions">
+    <app-action-view *ngFor="let val of displayValue" [columnConfig]="columnConfig" [rowData]="rowData" [value]="val">
+    </app-action-view>
+</div>

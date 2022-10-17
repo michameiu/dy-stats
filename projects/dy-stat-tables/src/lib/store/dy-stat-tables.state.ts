@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Action, State, StateContext } from "@ngxs/store";
+import { Action, Selector, State, StateContext } from "@ngxs/store";
 import { InitStatState, RefreshPage, SelectTable } from "./dy-stat-tables.actions";
 import { DataGroupingModel, QueryParamModel, StatStateModel, TableModel } from "./dy-stat-tables.models";
 import { Md5 } from 'ts-md5';
@@ -13,6 +13,7 @@ const defaultState = {
     name: "None Selected",
     drillDownSteps: [],
     groupings: [],
+    time: "Not set",
     showAndFilterFields: []
 }
 @State<StatStateModel>({
@@ -21,8 +22,70 @@ const defaultState = {
 })
 @Injectable()
 export class StatsTablesState {
-
     constructor(private serv: StatsTableService) { }
+
+    @Selector()
+    static results(state: StatStateModel) {
+        return this.table(state)?.results
+    }
+
+    @Selector()
+    static time(state: StatStateModel) {
+        return state.time
+    }
+
+    @Selector()
+    static page(state: StatStateModel) {
+        return this.table(state)?.page
+    }
+
+    @Selector()
+    static queryParams(state: StatStateModel) {
+        return state.groupings.find(gr => gr.name == state.selectedGrouping)?.visibleQueryParams
+    }
+
+    @Selector()
+    static pageSize(state: StatStateModel) {
+        return this.table(state)?.results?.length || 0
+    }
+
+    @Selector()
+    static headers(state: StatStateModel) {
+        return this.table(state)?.headers
+    }
+
+    @Selector()
+    static hasData(state: StatStateModel): boolean {
+        return this.table(state)?.count != 0;
+    }
+    @Selector()
+    static drillDownSteps(state: StatStateModel): string[] {
+        return state.groupings.map(gr => getHeaderTitle(gr.name));
+    }
+    @Selector()
+    static activeGroupings(state: StatStateModel): DataGroupingModel[] {
+        const currentGrouping = state.selectedGrouping
+        return currentGrouping ? state.groupings.slice(0, state.groupings.map(gr => gr.name).indexOf(currentGrouping) + 1) : [];
+    }
+
+    @Selector()
+    static table(state: StatStateModel) {
+        const grouping = state.groupings.find(gr => gr.name == state.selectedGrouping)
+        if (grouping) {
+            return grouping.tables.find(tb => tb.id == grouping.selectedTable)
+        }
+        return undefined
+    }
+
+    private _getSelectedGroupingTable(state: StatStateModel): TableModel | undefined {
+        const grouping = state.groupings.find(gr => gr.name == state.selectedGrouping)
+        if (grouping) {
+            return grouping.tables.find(tb => tb.id == grouping.selectedTable)
+        }
+        return undefined
+    }
+
+
 
     @Action(InitStatState)
     initState(ctx: StateContext<StatStateModel>, { payload }: InitStatState) {
@@ -51,7 +114,7 @@ export class StatsTablesState {
                 throw new Error("Failed to setup new grouping")
             }
             console.debug("Done intit..")
-
+            // return ctx.dispatch(new SelectTable())
 
         } else {
             // Else Set grouping zero and set new queryParams
@@ -60,7 +123,8 @@ export class StatsTablesState {
             const groupingOne = groupings.find(gr => gr.name == payload.selectedGrouping)
             if (groupingOne) {
                 groupingOne.visibleQueryParams = queryParams
-                ctx.patchState({
+                ctx.setState({
+                    ...state,
                     selectedGrouping: payload.selectedGrouping,
                     groupings: groupings,
                 })
@@ -68,10 +132,13 @@ export class StatsTablesState {
             } else {
                 throw new Error("Failed to setup new grouping")
             }
+            // return ctx.dispatch(new SelectTable())
         }
         console.debug("Selecting table.")
         // Send Select group
-        return ctx.dispatch(new SelectTable())
+        // setTimeout(() => {
+        ctx.dispatch(new SelectTable())
+        // }, 100)
     }
 
     @Action(SelectTable)
@@ -90,12 +157,23 @@ export class StatsTablesState {
             const selectedTable = selectedGrouping.tables.find(tb => tb.id == tableHash)
             if (selectedTable) {
                 // Do nothing
+                selectedGrouping.selectedTable = tableHash
+                ctx.setState(patch<StatStateModel>({
+                    groupings: updateItem<DataGroupingModel>(grp => grp?.name == selectedGrouping.name, selectedGrouping)
+                }))
             } else {
                 return ctx.dispatch(new RefreshPage())
+
             }
         }
+        // return null
+        // setTimeout(() => {
+        // ctx.dispatch(new RefreshPage())
+        // }, 1000)
         return null
+
     }
+
     @Action(RefreshPage)
     refreshPage(ctx: StateContext<StatStateModel>, action: SelectTable) {
         const state = ctx.getState()
@@ -124,14 +202,11 @@ export class StatsTablesState {
                         console.log("Found headers")
                         console.log(newheaders)
                     }
-
                 }
-                console.log(table)
+                selectedGrouping.selectedTable = tableHash
                 selectedGrouping.tables = [{ ...table, ...result }]
-                // ctx.patchState({
-                //     groupings
-                // })
                 ctx.setState(patch<StatStateModel>({
+                    time: new Date().toLocaleString(),
                     groupings: updateItem<DataGroupingModel>(grp => grp?.name == selectedGrouping.name, selectedGrouping)
                 }))
             })
@@ -140,7 +215,7 @@ export class StatsTablesState {
 
     private _getTableHash(queryParams: QueryParamModel[]) {
         const queryParamsStr = JSON.stringify(queryParams.map(q => `${q.name}=${q.value}`).join("&"))
-        console.debug(queryParamsStr)
+        console.debug(`${queryParamsStr}`)
         return Md5.hashStr(queryParamsStr)
     }
 

@@ -1,0 +1,26 @@
+$danger: #dc3545;
+
+div,
+h1,
+span,
+button {
+    font-family: "Prompt-Regular";
+}
+
+.dialog-title {
+    font-size: 18px;
+    font-family: "Prompt-Medium";
+}
+
+.dialog-button {
+    font-size: 13px;
+}
+
+.error-message {
+    color: $danger;
+    font-size: 13px;
+}
+
+.btn-no-thanks {
+    margin-right: 8px;
+}

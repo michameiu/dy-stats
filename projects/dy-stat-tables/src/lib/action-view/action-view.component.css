@@ -1,0 +1,23 @@
+.btn-complete {
+    width: 110%;
+}
+
+.delete-button {
+    border: none;
+    width: 80px;
+    border-radius: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.edit-button {
+    border: none;
+    width: 80px;
+    border-radius: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.action-view {
+    padding-right: 10px;
+}
