@@ -14,7 +14,7 @@ const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choic
     name: choice.value,
     displayName: choice.display_name,
     filterName: choice.filter_name || choice.value,
-    url: `api/v1/stats/students/${choice.value}`,
+    url: `api/v1/stats/attendances/${choice.value}`,
     valueField: "",
     tables: [],
     rowDisplayField: choice.row_display_field || `${choice.value}a_name`.replace(/-/g, "_"),
@@ -78,7 +78,13 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
       console.log(this.queryParams)
 
       for (let key in this.queryParams) {
-        queryParams.push({ name: key, value: this.queryParams[key] })
+        const value = this.queryParams[key]
+        if (typeof value == "object" && Array.isArray(value)) {
+          queryParams = [...queryParams, ...value.map(v => ({ name: key, value: v }))]
+        } else {
+          queryParams.push({ name: key, value: value })
+
+        }
       }
       //Set the table and refresh & Check if any
       this.store.dispatch(new InitStatState({ groupings: groupings, queryParams: queryParams, selectedGrouping: this.groupingId }))

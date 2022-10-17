@@ -155,16 +155,15 @@ export class StatsTablesState {
             const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
             console.debug(`Table Hash`, tableHash)
             const selectedTable = selectedGrouping.tables.find(tb => tb.id == tableHash)
-            if (selectedTable) {
-                // Do nothing
-                selectedGrouping.selectedTable = tableHash
-                ctx.setState(patch<StatStateModel>({
-                    groupings: updateItem<DataGroupingModel>(grp => grp?.name == selectedGrouping.name, selectedGrouping)
-                }))
-            } else {
-                return ctx.dispatch(new RefreshPage())
-
-            }
+            // if (selectedTable) {
+            //     // Do nothing
+            //     selectedGrouping.selectedTable = tableHash
+            //     ctx.setState(patch<StatStateModel>({
+            //         groupings: updateItem<DataGroupingModel>(grp => grp?.name == selectedGrouping.name, selectedGrouping)
+            //     }))
+            // } else {
+            return ctx.dispatch(new RefreshPage())
+            // }
         }
         // return null
         // setTimeout(() => {

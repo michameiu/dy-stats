@@ -25,6 +25,7 @@ export class StatsTableService {
   }
 
   getQueryParams(queryParams: QueryParamModel[]) {
+    console.log(queryParams)
     return queryParams.map(q => {
       return `${q.name}=${q.value}`
     }).join("&")
