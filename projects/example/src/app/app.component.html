@@ -1,0 +1,12 @@
+<div class="container">
+  <h1 class="text-primary"> Dynamic Stat Tables</h1>
+  <div *ngIf="isAuthenticated$ |async">
+    <p>{{token$ |async}}</p>
+    <p>{{profile$ | async}}</p>
+    <button (click)="logout()">Logout</button>
+    <router-outlet></router-outlet>
+  </div>
+  <div *ngIf="! (isAuthenticated$ |async)">
+    <sistch-ngxs-login></sistch-ngxs-login>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+{
+  "name": "sistch-dy-stat-tables",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "dy-stat-tables:build": "ng build dy-stat-tables --prod",
+    "dy-stat-tables:publish": "ng build dy-stat-tables --prod;npm publish dist/dy-stat-tables",
+    "dy-stat-tables:pack": "cd dist/dy-stat-tables; npm pack",
+    "dy-stat-tables:build:pack": "npm run dy-stat-tables:build;npm run dy-stat-tables:pack"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "~13.2.0",
+    "@angular/common": "~13.2.0",
+    "@angular/compiler": "~13.2.0",
+    "@angular/core": "~13.2.0",
+    "@angular/forms": "~13.2.0",
+    "@angular/platform-browser": "~13.2.0",
+    "@angular/platform-browser-dynamic": "~13.2.0",
+    "@angular/router": "~13.2.0",
+    "@ngxs/devtools-plugin": "^3.7.5",
+    "@ngxs/router-plugin": "^3.7.5",
+    "@ngxs/storage-plugin": "^3.7.5",
+    "@ngxs/store": "^3.7.5",
+    "@popperjs/core": "^2.11.6",
+    "@sisitech/ngxs-auth": "0.0.2",
+    "@types/bootstrap": "^5.2.5",
+    "bootstrap": "^5.1.3",
+    "rxjs": "~7.5.0",
+    "ts-md5": "^1.3.1",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~13.2.6",
+    "@angular/cli": "~13.1.4",
+    "@angular/compiler-cli": "~13.2.0",
+    "@types/jasmine": "~3.10.0",
+    "@types/node": "^12.11.1",
+    "jasmine-core": "~4.0.0",
+    "karma": "~6.3.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.1.0",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "~1.7.0",
+    "ng-packagr": "^13.0.0",
+    "typescript": "~4.5.2"
+  }
+}
