@@ -6,7 +6,7 @@
     <table class="table table-hover table-bordered caption" style="width:100%">
         <thead class="thead-dark">
             <tr>
-                <!-- <th *ngIf="canShowNumbering" class="table-header">#</th> -->
+                <th *ngIf="canShowNumbering" class="table-header">#</th>
                 <th *ngFor="let header of tableHeaders$|async;let i = index" class="table-header">
                     <!-- <app-mytd [columnConfig]="header.title" [isHeaderCell]=true></app-mytd> -->
                     <!-- <span>{{header.title}}</span> -->
@@ -19,7 +19,7 @@
 
         <tbody *ngIf="(hasData$ |async) && !loading">
             <tr *ngFor="let row of (results$|async);let j=index; ">
-                <!-- <th *ngIf="canShowNumbering">{{(j+1)+((pageSize$|async)*((page$|async)-1))}}</th> -->
+                <th *ngIf="canShowNumbering">{{(j+1)+(((pageSize$ | async)||0)*((( page$ | async)||1)-1))}}</th>
                 <td (click)="drillDown(row,header)" *ngFor="let header of tableHeaders$|async; let j = index;">
                     <!-- <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd> -->
                     <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd>

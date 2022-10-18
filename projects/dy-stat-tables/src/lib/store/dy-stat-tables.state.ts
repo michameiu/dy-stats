@@ -36,8 +36,8 @@ export class StatsTablesState {
     }
 
     @Selector()
-    static page(state: StatStateModel) {
-        return this.table(state)?.page
+    static page(state: StatStateModel): number {
+        return this.table(state)?.page || 1
     }
 
     @Selector()
@@ -46,7 +46,7 @@ export class StatsTablesState {
     }
 
     @Selector()
-    static pageSize(state: StatStateModel) {
+    static pageSize(state: StatStateModel): number {
         return this.table(state)?.results?.length || 0
     }
 
@@ -114,7 +114,6 @@ export class StatsTablesState {
         queryParams.forEach(param => {
             params[param.name] = param.value
         })
-        console.log(params)
         return params
     }
 
@@ -182,7 +181,7 @@ export class StatsTablesState {
             } else {
                 throw new Error("Failed to setup new grouping")
             }
-            console.debug("Done intit..")
+            // console.debug("Done intit..")
             // return ctx.dispatch(new SelectTable())
 
         } else {
@@ -232,6 +231,9 @@ export class StatsTablesState {
             //         groupings: updateItem<DataGroupingModel>(grp => grp?.name == selectedGrouping.name, selectedGrouping)
             //     }))
             // } else {
+            // ctx.patchState({
+            //     time: new Date().toLocaleString()
+            // })
             return ctx.dispatch(new RefreshPage())
             // }
         }
@@ -255,13 +257,16 @@ export class StatsTablesState {
 
     private _getData(ctx: StateContext<StatStateModel>, selectedGrouping: DataGroupingModel) {
         const url = selectedGrouping.url
+        const hideHeaders = ['id', 'value']
         const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
         const table: TableModel = { id: tableHash, page: 1, grouping: selectedGrouping.name }
+        // table.results = []
+
         return this.serv.getData<TableModel>(url, selectedGrouping?.visibleQueryParams || []).pipe(
             tap((result: TableModel) => {
                 if (result.results?.length || 0 > 0) {
                     const row = result.results ? result.results[0] : {}
-                    const newheaders = Object.keys(row).map(header => {
+                    const newheaders = Object.keys(row).filter(h => !hideHeaders.includes(h)).map(header => {
                         return { name: header, title: getHeaderTitle(header), active: true }
                     })
 
@@ -272,8 +277,9 @@ export class StatsTablesState {
                         console.log(newheaders)
                     }
                 }
-                selectedGrouping.selectedTable = tableHash
                 selectedGrouping.tables = [{ ...table, ...result }]
+                selectedGrouping.selectedTable = tableHash
+
                 ctx.setState(patch<StatStateModel>({
                     time: new Date().toLocaleString(),
                     groupings: updateItem<DataGroupingModel>(grp => grp?.name == selectedGrouping.name, selectedGrouping)

@@ -78,9 +78,6 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
         this.router.navigate([`/${groupings[0].name}/`], { queryParams: this.queryParams })
         return
       }
-      console.log(this.groupingId)
-      console.log(this.queryParams)
-
       for (let key in this.queryParams) {
         const value = this.queryParams[key]
         if (typeof value == "object" && Array.isArray(value)) {
