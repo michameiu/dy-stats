@@ -15,16 +15,6 @@ const authConfig = {
   clientId: "MkNyGrkTC8nr2eq6t9xrNW7SixjWR97AwW0ZlFHc",
 }
 
-const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choices
-  .map((choice: any) => ({
-    name: choice.value, displayName: choice.display_name,
-    filterName: choice.filter_name || choice.value,
-    url: choice.name,
-    valueField: "",
-    tables: [],
-    rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
-  }))
-
 
 @NgModule({
   declarations: [
@@ -38,7 +28,7 @@ const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choic
     NgxsReduxDevtoolsPluginModule.forRoot(),
   ],
   providers: [
-    { provide: 'groupings', useValue: groupings || {} },
+    { provide: 'groupings', useValue: {} },
   ],
   bootstrap: [AppComponent]
 })

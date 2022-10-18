@@ -48,6 +48,8 @@ export interface DataGroupingModel {
     url: string // Tables share url but not the query Params derived from name
     selectedTable?: string // Previously active table
     valueField: string // The grouping field. Defaults to the `value` field. Hidden by default
+    showAndFilterFields: string[]
+    currentFilterDisplayValue?: string | number
     visibleQueryParams?: QueryParamModel[] // Will be displayed and user will interact
     hiddenQueryParams?: QueryParamModel[] // Smart params. Updated by the dynamic lib
     tables: TableModel[]

@@ -3,7 +3,7 @@ import { DataGroupingModel, QueryParamModel, StatStateModel, TableHeaderModel } 
 
 export class InitStatState {
     static readonly type = '[StatsTable] InitState Grouping';
-    constructor(public payload: { groupings: DataGroupingModel[], selectedGrouping: string, queryParams: QueryParamModel[] }) { }
+    constructor(public payload: { groupings: DataGroupingModel[], selectedGrouping: string, queryParams: QueryParamModel[], showAndFilterFields: string[] }) { }
 }
 
 // Selecting a data group
@@ -29,6 +29,19 @@ export class SelectTable {
     constructor() { }
 }
 
+export class NextRoute {
+    static readonly type = '[StatsTable] Select Next Route ';
+    constructor(public payload: { url: string, queryParams: any }) { }
+
+}
+
+export class SelectTableRow {
+    static readonly type = '[StatsTable] Select Table Row';
+    constructor(public payload: { header: TableHeaderModel, row: any }) {
+
+    }
+
+}
 export class RefreshPage {
     // Get the selected grouping from state
     // Get the selected table(hash) from grouping

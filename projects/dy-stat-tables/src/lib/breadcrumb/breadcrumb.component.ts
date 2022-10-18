@@ -15,7 +15,7 @@ export class BreadcrumbComponent implements OnInit {
   constructor(private store: Store) { }
   @Select(StatsTablesState.activeGroupings) groupings$!: Observable<DataGroupingModel[]>;
   @Select(StatsTablesState.queryParams) queryParams$!: Observable<DataGroupingModel[]>;
-  @Select(StatsTablesState.headers) headers$!: Observable<TableHeaderModel[]>;
+  @Select(StatsTablesState.activeHeaders) headers$!: Observable<TableHeaderModel[]>;
 
   ngOnInit(): void {
   }
