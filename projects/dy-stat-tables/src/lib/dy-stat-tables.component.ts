@@ -4,7 +4,7 @@ import { Navigate } from '@ngxs/router-plugin';
 import { Actions, ofActionCompleted, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { InitStatState, NextRoute, SelectTableRow } from './store/dy-stat-tables.actions';
 import { filterOptions } from './options'
-import { DataGroupingModel, QueryParamModel, TableHeaderModel } from './store/dy-stat-tables.models';
+import { DataGroupingModel, QueryParamModel, SortDirection, TableHeaderModel } from './store/dy-stat-tables.models';
 import { StatsTablesState } from './store/dy-stat-tables.state';
 import { Observable } from 'rxjs/internal/Observable';
 import { Subscription } from 'rxjs';
@@ -18,6 +18,10 @@ const attendanceGroupings: DataGroupingModel[] = filterOptions.actions.POST.grou
     url: `api/v1/stats/attendances/${choice.value}`,
     valueField: "",
     tables: [],
+    // sort: {
+    //   orderBy: 'total_attendances_taken',
+    //   order: SortDirection.ASC
+    // },
     showAndFilterFields: showAndFilterFields,
     rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
   }))
@@ -33,6 +37,8 @@ const enrollmentGroupings: DataGroupingModel[] = filterOptions.actions.POST.grou
     showAndFilterFields: ['males', 'females'],
     rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
   }))
+
+const currentGrouping = attendanceGroupings
 
 
 @Component({
@@ -109,7 +115,7 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
       let queryParams: QueryParamModel[] = []
 
       this.groupingId = params.get("routing") || ""
-      console.log(this.groupingId)
+      // console.log(this.groupingId)
       //Set the table and refresh & Check if any
 
       if (!this.groupingId) {
@@ -128,7 +134,7 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
       }
       // console.log(queryParams)
       //Set the table and refresh & Check if any
-      this.store.dispatch(new InitStatState({ groupings: enrollmentGroupings, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: showAndFilterFields }))
+      this.store.dispatch(new InitStatState({ groupings: currentGrouping, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: showAndFilterFields }))
     });
 
 

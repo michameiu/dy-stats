@@ -37,9 +37,19 @@ const filterOptions = {
                         display_name: "School",
                     },
                     {
-                        value: "student-status",
-                        display_name: "Status",
-                        filter_name: 'status'
+                        value: "year",
+                        display_name: "Year",
+                        filter_name: "start_date"
+                    },
+                    {
+                        value: "month",
+                        display_name: "Month",
+                        filter_name: "start_date"
+                    },
+                    {
+                        value: "day",
+                        display_name: "Day",
+                        filter_name: "date"
                     },
                     {
                         value: "class",
@@ -50,6 +60,11 @@ const filterOptions = {
                         value: "id",
                         display_name: "No Grouping",
                         filter_name: ""
+                    },
+                    {
+                        value: "student-status",
+                        display_name: "Status",
+                        filter_name: 'status'
                     },
 
                     {

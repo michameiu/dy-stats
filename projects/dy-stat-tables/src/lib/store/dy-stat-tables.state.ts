@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext } from "@ngxs/store";
-import { InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow } from "./dy-stat-tables.actions";
+import { InitStatState, NextRoute, RefreshPage, SelectSort, SelectTable, SelectTableRow } from "./dy-stat-tables.actions";
 import { DataGroupingModel, QueryParamModel, StatStateModel, TableHeaderModel, TableModel } from "./dy-stat-tables.models";
 import { compose, updateItem, iif, insertItem, patch } from '@ngxs/store/operators';
 import { StatsTableService } from "../stats-table.service";
@@ -24,6 +24,15 @@ export class StatsTablesState {
     @Selector()
     static selectedGrouping(state: StatStateModel): DataGroupingModel | undefined {
         return state.groupings.find(gr => gr.name == state.selectedGrouping)
+    }
+
+    @Selector()
+    static sort(state: StatStateModel) {
+        const selectedGrouping = state.groupings.find(gr => gr.name == state.selectedGrouping)
+        if (selectedGrouping) {
+            return selectedGrouping.sort
+        }
+        return undefined
     }
 
     @Selector()
@@ -68,6 +77,19 @@ export class StatsTablesState {
         return undefined
     }
 
+    @Action(SelectSort)
+    selectSort(ctx: StateContext<StatStateModel>, { payload }: SelectSort) {
+        const state = ctx.getState()
+        const currentGrouping = state.groupings.find(gr => gr.name == state.selectedGrouping)
+        if (currentGrouping) {
+            currentGrouping.sort = payload.orderBy != "" ? payload : undefined
+            ctx.setState(patch<StatStateModel>({
+                time: new Date().toLocaleString(),
+                groupings: updateItem<DataGroupingModel>(gr => gr?.name == currentGrouping?.name, currentGrouping)
+            }))
+        }
+        return ctx.dispatch(new RefreshPage())
+    }
 
 
 

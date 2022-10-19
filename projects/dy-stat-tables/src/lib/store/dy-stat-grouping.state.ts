@@ -145,7 +145,6 @@ export class TablesState {
             currentGrouping.currentFilterDisplayValue = queryParamDisplayValue
             return ctx.dispatch(new NextRoute({ url: `/${nextGrouping.name}`, queryParams: this._getQueryParamsMap([...currentQueryParams, nextLevelQueryParam]) }))
         }
-
         return undefined
     }
 
@@ -166,7 +165,13 @@ export class TablesState {
         const table: TableModel = { id: tableHash, page: 1, grouping: selectedGrouping.name }
         ctx.patchState({ selectedTable: "", isLoading: true })
 
-        return this.serv.getData<TableModel>(url, selectedGrouping?.visibleQueryParams || []).pipe(
+        const allHeaders = selectedGrouping?.visibleQueryParams?.slice() || []
+        if (selectedGrouping.sort) {
+            allHeaders.push({ name: 'order_by', value: selectedGrouping.sort.orderBy })
+            allHeaders.push({ name: 'order', value: selectedGrouping.sort.order })
+        }
+
+        return this.serv.getData<TableModel>(url, allHeaders).pipe(
             tap((result: TableModel) => {
                 if (result.results?.length || 0 > 0) {
                     const row = result.results ? result.results[0] : {}
@@ -199,7 +204,7 @@ export class TablesState {
 
     private _getTableHash(queryParams: QueryParamModel[]) {
         const queryParamsStr = JSON.stringify(queryParams.map(q => `${q.name}=${q.value}`).join("&"))
-        console.debug(`${queryParamsStr}`)
+        // console.debug(`${queryParamsStr}`)
         return Md5.hashStr(queryParamsStr)
     }
 }

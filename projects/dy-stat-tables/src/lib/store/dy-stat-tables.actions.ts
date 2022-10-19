@@ -21,7 +21,7 @@ export class SelectDataGrouping {
 
 export class SelectSort {
     static readonly type = '[StatsTable] Update Sort';
-    constructor(public payload: { field: string, order: SortDirection }) { }
+    constructor(public payload: { orderBy: string, order: SortDirection }) { }
 }
 
 

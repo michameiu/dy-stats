@@ -13,13 +13,13 @@ export interface TableHeaderModel {
 }
 
 export enum SortDirection {
-    ASC,
-    DESC
+    ASC = "ASC",
+    DESC = "DESC"
 }
 
 export interface TableSortModel {
-    field: string // Should be updated when updating the headers
-    direstion: SortDirection // ASC or DESC
+    orderBy: string // Should be updated when updating the headers
+    order: SortDirection // ASC or DESC
 }
 
 
