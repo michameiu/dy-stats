@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs/internal/Observable';
 import { getHeaderTitle } from '../stats-tables.utils';
+import { TablesState } from '../store/dy-stat-grouping.state';
 import { DataGroupingModel, TableHeaderModel } from '../store/dy-stat-tables.models';
 import { StatsTablesState } from '../store/dy-stat-tables.state';
 
@@ -14,8 +15,7 @@ export class BreadcrumbComponent implements OnInit {
 
   constructor(private store: Store) { }
   @Select(StatsTablesState.activeGroupings) groupings$!: Observable<DataGroupingModel[]>;
-  @Select(StatsTablesState.queryParams) queryParams$!: Observable<DataGroupingModel[]>;
-  @Select(StatsTablesState.activeHeaders) headers$!: Observable<TableHeaderModel[]>;
+  @Select(TablesState.headers) headers$!: Observable<TableHeaderModel[]>;
 
   ngOnInit(): void {
   }

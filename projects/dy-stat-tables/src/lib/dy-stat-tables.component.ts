@@ -8,6 +8,7 @@ import { DataGroupingModel, QueryParamModel, TableHeaderModel } from './store/dy
 import { StatsTablesState } from './store/dy-stat-tables.state';
 import { Observable } from 'rxjs/internal/Observable';
 import { Subscription } from 'rxjs';
+import { TablesState } from './store/dy-stat-grouping.state';
 const showAndFilterFields = ['present_males', 'present_females', 'absent_males', 'absent_females']
 const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choices
   .map((choice: any) => ({
@@ -26,30 +27,53 @@ const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choic
   selector: 'sistch-dy-stat-tables',
   templateUrl: 'dy-stat-tables.component.html',
   styles: [
+    `
+    .linear-background {
+            position: relative;
+            overflow: hidden;
+            display: block;
+            animation-duration: 1s;
+            animation-fill-mode: forwards;
+            animation-iteration-count: infinite;
+            animation-name: placeHolderShimmer;
+            animation-timing-function: linear;
+            background: #f6f7f8;
+            background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+            background-size: 1000px 10px;
+            height: 30px;
+            border-radius: 3px;
+        }
+    
+    `
   ]
 })
 export class DyStatTablesComponent implements OnInit, OnDestroy {
 
-  @Select(StatsTablesState.headers) tableHeaders$!: Observable<TableHeaderModel[]>;
-  @Select(StatsTablesState.results) results$!: Observable<any[]>;
-  @Select(StatsTablesState.pageSize) pageSize$!: Observable<number>;
-  @Select(StatsTablesState.page) page$!: Observable<number>;
+  @Select(TablesState.headers) tableHeaders$!: Observable<TableHeaderModel[]>;
+  @Select(TablesState.results) results$!: Observable<any[]>;
+  @Select(TablesState.pageSize) pageSize$!: Observable<number>;
+  @Select(TablesState.page) page$!: Observable<number>;
   @Select(StatsTablesState.time) time$!: Observable<string>;
   @Select(StatsTablesState.showAndFilterFields) showAndFilterFields$!: Observable<string[]>;
-  @Select(StatsTablesState.hasData) hasData$!: Observable<boolean>;
+  @Select(TablesState.hasData) hasData$!: Observable<boolean>;
+  @Select(TablesState.isLoading) isLoading$!: Observable<boolean>;
   @Select(StatsTablesState.drillDownSteps) drillDownSteps$!: Observable<string[]>;
-  // @Select(StatsTablesState.currentTable) currentTable$!: Observable<StatTableModel>;
+  @Select(TablesState.currentTable) currentTable$!: Observable<any>;
 
   canShowNumbering: boolean = true
   name: string = "Students Stats"
   loading: boolean = false
-  dummyData: any = ["", "", ""]
+  dummyData: any = ["", "", "", "", "", "", "", "", ""]
   groupingId: string = ""
   queryParams: any
   subscription?: Subscription
+  routeSub?: Subscription
+  queryParamSub?: Subscription
   constructor(private store: Store, private actions$: Actions, private activatedRoute: ActivatedRoute, private router: Router) { }
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    this.routeSub?.unsubscribe()
+    this.queryParamSub?.unsubscribe()
   }
 
   ngOnInit(): void {
@@ -66,7 +90,7 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
 
       })
     // console.log("Something is wrong...")
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.routeSub = this.activatedRoute.paramMap.subscribe(params => {
       let queryParams: QueryParamModel[] = []
 
       this.groupingId = params.get("routing") || ""
@@ -90,12 +114,9 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
       //Set the table and refresh & Check if any
       this.store.dispatch(new InitStatState({ groupings: groupings, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: showAndFilterFields }))
     });
-    this.activatedRoute.queryParams.subscribe(params => {
+    this.queryParamSub = this.activatedRoute.queryParams.subscribe(params => {
       this.queryParams = params || {}
-      console.log(this.queryParams)
     });
-
-    ///
 
   }
   getRowValue(row: any, header: TableHeaderModel | string) {
@@ -108,21 +129,6 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
   drillDown(row: any, header: TableHeaderModel) {
     // console.log(header, row)
     this.store.dispatch(new SelectTableRow({ header: header, row: row }))
-
-    // if (header.name !== "value") { 
-    // const rowValue = this.getRowValue(row, "value")
-    // this.store.dispatch(new UpdateHeaderStatus({ header: header, single: true }))
-    // this.store.dispatch(new SelectNextTable({ value: rowValue, row: row }))
-
-    //   return
-    // }
-    // console.log("Drill Down")
-    // const rowValue = this.getRowValue(row, header)
-    // const displayName=this.getData(row,header)
-    // console.log(rowValue)
-    // // const currentIndex=this.drillDownSteps.indexOf()
-    // console.log(rowValue)
-    // this.store.dispatch(new SelectNextTable({ value: rowValue, row: row }))
   }
 
   onClick() {

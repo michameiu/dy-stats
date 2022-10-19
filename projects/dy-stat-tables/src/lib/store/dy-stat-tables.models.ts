@@ -52,7 +52,6 @@ export interface DataGroupingModel {
     currentFilterDisplayValue?: string | number
     visibleQueryParams?: QueryParamModel[] // Will be displayed and user will interact
     hiddenQueryParams?: QueryParamModel[] // Smart params. Updated by the dynamic lib
-    tables: TableModel[]
 }
 
 
@@ -66,4 +65,11 @@ export interface StatStateModel {
     time: string,
     removedShowAndFilterHeaders?: TableHeaderModel[],
     drillDownSteps: string[] // Hierachial order of the groupings by name
+}
+
+export interface TableStateModel {
+    selectedGrouping?: string
+    selectedTable?: string
+    isLoading: boolean
+    [id: string]: TableModel | string | undefined | boolean
 }

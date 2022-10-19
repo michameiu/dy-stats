@@ -9,6 +9,7 @@ import { DyStatTablesRoutingModule } from './dy-stat-tables.routing';
 import { MycelldisplayComponent } from './mycelldisplay/mycelldisplay.component';
 import { MypaginationComponent } from './mypagination/mypagination.component';
 import { MytdComponent } from './mytd/mytd.component';
+import { TablesState } from './store/dy-stat-grouping.state';
 import { StatsTablesState } from './store/dy-stat-tables.state';
 
 
@@ -25,7 +26,7 @@ import { StatsTablesState } from './store/dy-stat-tables.state';
   imports: [
     CommonModule,
     DyStatTablesRoutingModule,
-    NgxsModule.forFeature([StatsTablesState])
+    NgxsModule.forFeature([StatsTablesState, TablesState])
     // NgxsRouterPluginModule.forRoot({stor})
   ],
   exports: [

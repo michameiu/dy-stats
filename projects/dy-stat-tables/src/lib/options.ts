@@ -23,7 +23,7 @@ const filterOptions = {
                 "choices": [
                     {
                         value: "county",
-                        display_name: "County",
+                        display_name: "Counties",
                         filter_name: "school_county",
                         row_display_field: "county_name"
                     },

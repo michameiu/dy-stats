@@ -30,15 +30,15 @@
                 </td>
             </tr>
         </tbody>
-        <tbody *ngIf="loading">
-            <tr *ngFor="let dum of dummyData">
+        <tbody *ngIf="isLoading$|async">
+            <tr *ngFor="let dum of [1,2,3,4,5,6,7]">
                 <th *ngIf="canShowNumbering"><span class="linear-background"></span></th>
-                <td *ngFor="let dum of tableHeaders$|async">
+                <td *ngFor="let dum of [1,2,3,4,5,6,7]">
                     <span class="linear-background"></span>
                 </td>
             </tr>
         </tbody>
-        <tbody *ngIf="!(hasData$ |async)">
+        <tbody *ngIf="!(hasData$ |async) && !(isLoading$|async)">
             <tr class="no-data-text">No data available</tr>
         </tbody>
     </table>
