@@ -10,7 +10,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Subscription } from 'rxjs';
 import { TablesState } from './store/dy-stat-grouping.state';
 const showAndFilterFields = ['present_males', 'present_females', 'absent_males', 'absent_females']
-const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choices
+const attendanceGroupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choices
   .map((choice: any) => ({
     name: choice.value,
     displayName: choice.display_name,
@@ -19,6 +19,18 @@ const groupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choic
     valueField: "",
     tables: [],
     showAndFilterFields: showAndFilterFields,
+    rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
+  }))
+
+const enrollmentGroupings: DataGroupingModel[] = filterOptions.actions.POST.grouping.choices
+  .map((choice: any) => ({
+    name: choice.value,
+    displayName: choice.display_name,
+    filterName: choice.filter_name || choice.value,
+    url: `api/v1/stats/students/${choice.value}`,
+    valueField: "",
+    tables: [],
+    showAndFilterFields: ['males', 'females'],
     rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
   }))
 
@@ -89,6 +101,9 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
         this.router.navigate([`/${payload.url}/`], { queryParams: payload.queryParams })
 
       })
+    this.queryParamSub = this.activatedRoute.queryParams.subscribe(params => {
+      this.queryParams = params || {}
+    });
     // console.log("Something is wrong...")
     this.routeSub = this.activatedRoute.paramMap.subscribe(params => {
       let queryParams: QueryParamModel[] = []
@@ -99,7 +114,7 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
 
       if (!this.groupingId) {
         console.log("No grouping id")
-        this.router.navigate([`/${groupings[0].name}/`], { queryParams: this.queryParams })
+        this.router.navigate([`/${attendanceGroupings[0].name}/`], { queryParams: this.queryParams })
         return
       }
       for (let key in this.queryParams) {
@@ -111,12 +126,11 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
 
         }
       }
+      console.log(queryParams)
       //Set the table and refresh & Check if any
-      this.store.dispatch(new InitStatState({ groupings: groupings, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: showAndFilterFields }))
+      this.store.dispatch(new InitStatState({ groupings: enrollmentGroupings, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: showAndFilterFields }))
     });
-    this.queryParamSub = this.activatedRoute.queryParams.subscribe(params => {
-      this.queryParams = params || {}
-    });
+
 
   }
   getRowValue(row: any, header: TableHeaderModel | string) {

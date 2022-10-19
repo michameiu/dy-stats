@@ -37,6 +37,11 @@ const filterOptions = {
                         display_name: "School",
                     },
                     {
+                        value: "student-status",
+                        display_name: "Status",
+                        filter_name: 'status'
+                    },
+                    {
                         value: "class",
                         display_name: "Class",
                         filter_name: "base_class"
@@ -50,14 +55,6 @@ const filterOptions = {
                     {
                         value: "special-need",
                         display_name: "Special Needs"
-                    },
-                    {
-                        value: "student-status",
-                        display_name: "Status"
-                    },
-                    {
-                        value: "gender",
-                        display_name: "Gender"
                     },
                     {
                         value: "age",
