@@ -126,7 +126,7 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
 
         }
       }
-      console.log(queryParams)
+      // console.log(queryParams)
       //Set the table and refresh & Check if any
       this.store.dispatch(new InitStatState({ groupings: enrollmentGroupings, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: showAndFilterFields }))
     });

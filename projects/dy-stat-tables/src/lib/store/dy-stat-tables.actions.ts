@@ -1,4 +1,4 @@
-import { DataGroupingModel, QueryParamModel, StatStateModel, TableHeaderModel } from "./dy-stat-tables.models";
+import { DataGroupingModel, QueryParamModel, SortDirection, StatStateModel, TableHeaderModel } from "./dy-stat-tables.models";
 
 
 export class InitStatState {
@@ -17,6 +17,11 @@ export class SelectDataGrouping {
     // Trigger Selecting of the table by hash
     static readonly type = '[StatsTable] Select State Grouping';
     constructor(public payload: { grouping: string, queryParams: QueryParamModel }) { }
+}
+
+export class SelectSort {
+    static readonly type = '[StatsTable] Update Sort';
+    constructor(public payload: { field: string, order: SortDirection }) { }
 }
 
 
