@@ -1,4 +1,3 @@
-<hr class="my-12" />
 <div class="table-responsive">
     <h2>{{name}} </h2><small>{{time$|async}}</small>
     <sistch-stats-breadcrumb></sistch-stats-breadcrumb>
@@ -22,7 +21,9 @@
                 <th *ngIf="canShowNumbering">{{(j+1)+(((pageSize$ | async)||0)*((( page$ | async)||1)-1))}}</th>
                 <td (click)="drillDown(row,header)" *ngFor="let header of tableHeaders$|async; let j = index;">
                     <!-- <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd> -->
-                    <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd>
+                    <a>
+                        <app-mytd [columnConfig]="header.name" [rowData]="row"></app-mytd>
+                    </a>
 
                     <!-- <span *ngIf="header.name=='value'"><a
                             href="javascript:void(0)">{{getRowValue(row,header)}}</a></span>
