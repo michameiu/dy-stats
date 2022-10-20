@@ -9,6 +9,7 @@ import { StatsTableService } from "../stats-table.service";
 import { Md5 } from 'ts-md5';
 import { StatsTablesState } from "./dy-stat-tables.state";
 
+const SHOW_AND_FILTER_FIELD_NAME = 'only_and_filter_field'
 const defaultState = {
     isLoading: false
 }
@@ -49,6 +50,16 @@ export class TablesState {
         let table = state[state.selectedTable || ""] as TableModel | undefined
         return table?.headers
     }
+
+    @Selector()
+    static isHeaderActive(state: TableStateModel) {
+        let table = state[state.selectedTable || ""] as TableModel | undefined
+        const visibleHeaders = new Set(table?.headers?.filter(h => h.visible).map(h => h.name))
+        return (header: TableHeaderModel) => visibleHeaders.has(header.name)
+    }
+
+
+
 
     @Selector([TablesState.currentTable, StatsTablesState.selectedGrouping])
     static queryParams(table: TableModel, selectedGrouping: DataGroupingModel) {
@@ -138,14 +149,26 @@ export class TablesState {
         const currentGrouping = this._getSelectedGrouping()
         const nextGrouping = this._getNextGrouping(state)
 
+
         if (nextGrouping && currentGrouping) {
             const queryParamDisplayValue = this._getRowValue(row, currentGrouping.displayName)
             const currentQueryParams = currentGrouping.visibleQueryParams?.slice() || []
             const nextLevelQueryParam: QueryParamModel = { name: currentGrouping.filterName, displayName: queryParamDisplayValue, value: queryParamValue }
             currentGrouping.currentFilterDisplayValue = queryParamDisplayValue
-            return ctx.dispatch(new NextRoute({ url: `/${nextGrouping.name}`, queryParams: this._getQueryParamsMap([...currentQueryParams, nextLevelQueryParam]) }))
+            const newheaders = this._appendShowAndOnlyParams(header, [...currentQueryParams, nextLevelQueryParam])
+            return ctx.dispatch(new NextRoute({ url: `/${nextGrouping.name}`, queryParams: this._getQueryParamsMap(newheaders) }))
         }
         return undefined
+    }
+    private _appendShowAndOnlyParams(header: TableHeaderModel, queryParams: QueryParamModel[]): QueryParamModel[] {
+        const currentGrouping = this._getSelectedGrouping()
+        const isAShowOnlyField = currentGrouping?.showAndFilterFields.includes(header.name)
+        console.log(`Clicked a isSHowONlyField ${header.name} ${isAShowOnlyField}`)
+        if (!isAShowOnlyField) return queryParams
+        queryParams = queryParams.filter(q => q.name != SHOW_AND_FILTER_FIELD_NAME)
+        queryParams.push({ name: SHOW_AND_FILTER_FIELD_NAME, value: header.name })
+        console.log(queryParams)
+        return queryParams
     }
 
     @Action(RefreshPage)
@@ -160,6 +183,7 @@ export class TablesState {
     private _getData(ctx: StateContext<TableStateModel>, selectedGrouping: DataGroupingModel) {
         const url = selectedGrouping.url
         const state = ctx.getState()
+        const currentGrouping = this._getSelectedGrouping()
         const hideHeaders = ['id', 'value']
         const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
         const table: TableModel = { id: tableHash, page: 1, grouping: selectedGrouping.name }
@@ -176,7 +200,12 @@ export class TablesState {
                 if (result.results?.length || 0 > 0) {
                     const row = result.results ? result.results[0] : {}
                     const newheaders = Object.keys(row).filter(h => !hideHeaders.includes(h)).map(header => {
-                        return { name: header, title: getHeaderTitle(header), active: true }
+                        return {
+                            name: header,
+                            title: getHeaderTitle(header),
+                            active: true,
+                            visible: currentGrouping?.showAndFilterFields.includes(header)
+                        }
                     })
 
                     if (table.headers == undefined) {

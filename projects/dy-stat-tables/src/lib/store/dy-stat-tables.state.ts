@@ -62,6 +62,19 @@ export class StatsTablesState {
     }
 
     @Selector()
+    static onlyAndFilterFields(state: StatStateModel): TableHeaderModel[] {
+        const selectedGrouping = state.groupings.find(gr => gr.name == state.selectedGrouping)
+        if (selectedGrouping) {
+            return selectedGrouping.showAndFilterFields.map(h => ({
+                name: h,
+                active: true,
+                title: getHeaderTitle(h)
+            }));
+        }
+        return []
+    }
+
+    @Selector()
     static showAndFilterFields(state: StatStateModel): string[] {
         return state.groupings.find(gr => gr.name == state?.selectedGrouping)?.showAndFilterFields || [];
     }

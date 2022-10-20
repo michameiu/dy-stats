@@ -22,7 +22,7 @@ const attendanceGroupings: DataGroupingModel[] = filterOptions.actions.POST.grou
     //   orderBy: 'total_attendances_taken',
     //   order: SortDirection.ASC
     // },
-    showAndFilterFields: showAndFilterFields,
+    showAndFilterFields: choice.only_and_filter_fields ? choice.only_and_filter_fields : showAndFilterFields,
     rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
   }))
 
@@ -34,7 +34,7 @@ const enrollmentGroupings: DataGroupingModel[] = filterOptions.actions.POST.grou
     url: `api/v1/stats/students/${choice.value}`,
     valueField: "",
     tables: [],
-    showAndFilterFields: ['males', 'females'],
+    showAndFilterFields: choice.only_and_filter_fields ? choice.only_and_filter_field : ['males', 'females'],
     rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
   }))
 

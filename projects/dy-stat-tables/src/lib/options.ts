@@ -59,7 +59,8 @@ const filterOptions = {
                     {
                         value: "id",
                         display_name: "No Grouping",
-                        filter_name: ""
+                        filter_name: "",
+                        only_and_filter_fields: []
                     },
                     {
                         value: "student-status",

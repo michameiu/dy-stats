@@ -2,7 +2,7 @@
     <h2>{{name}} </h2><small>{{time$|async}}</small>
     <div class="row">
         <div class="col-8">
-            <sistch-stats-breadcrumb></sistch-stats-breadcrumb>
+            <sistch-stats-breadcrumb *ngIf="!(isLoading$|async)"></sistch-stats-breadcrumb>
 
         </div>
         <div class="col">
