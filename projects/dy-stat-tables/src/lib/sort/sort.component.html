@@ -1,19 +1,29 @@
 <form [formGroup]="sortForm" class="row p-2">
-    <div class="col">
-        <small>Order By</small>
-        <select formControlName="orderBy" (change)="updateOrder()" class="form-select-sm">
-            <option data-hidden="true"></option>
-            <option *ngFor="let header of headers$|async" [value]="header.name">{{header.title}}</option>
-        </select>
+    <div class="col-6">
+        <div class="row">
+            <small>Order By</small>
+        </div>
+        <div class="row">
+            <select formControlName="orderBy" (change)="updateOrder()" class="form-select-sm">
+                <option data-hidden="true"></option>
+                <option *ngFor="let header of headers$|async" [value]="header.name">{{header.title}}</option>
+            </select>
+        </div>
     </div>
+    &nbsp;
 
-    <div class="col ">
-        &nbsp;
-        <select formControlName="order" (change)="updateOrder()" class="form-select-sm">
+    <div class="col-5">
+        <div class="row">
+            <small>Order</small>
 
-            <option value="ASC">ASC</option>
-            <option value="DESC">DESC</option>
-        </select>
+        </div>
+        <div class="row">
+            <select formControlName="order" (change)="updateOrder()" class="form-select-sm">
+                <option value="ASC">ASC</option>
+                <option value="DESC">DESC</option>
+            </select>
+        </div>
+
     </div>
 
 </form>
