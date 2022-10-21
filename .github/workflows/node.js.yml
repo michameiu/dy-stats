@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: MoE Kenya Stats Build
-    runs-on: node
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
