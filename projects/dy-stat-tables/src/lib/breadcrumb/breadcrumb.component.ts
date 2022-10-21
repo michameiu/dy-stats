@@ -3,6 +3,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs/internal/Observable';
 import { getHeaderTitle } from '../stats-tables.utils';
 import { TablesState } from '../store/dy-stat-grouping.state';
+import { UpdateColumn } from '../store/dy-stat-tables.actions';
 import { DataGroupingModel, TableHeaderModel } from '../store/dy-stat-tables.models';
 import { StatsTablesState } from '../store/dy-stat-tables.state';
 
@@ -28,11 +29,10 @@ export class BreadcrumbComponent implements OnInit {
     // this.store.dispatch(new SelectGrouping(group))
   }
   onChange(event: any, header: TableHeaderModel) {
-    console.log(event)
+    // console.log(event)
     const value = event.target.checked
     header.active = value
-
-    // this.store.dispatch(new UpdateHeaderStatus({ header: header, single: true }))
+    this.store.dispatch(new UpdateColumn({ header: header }))
   }
 
 }

@@ -34,7 +34,7 @@ const enrollmentGroupings: DataGroupingModel[] = filterOptions.actions.POST.grou
     url: `api/v1/stats/students/${choice.value}`,
     valueField: "",
     tables: [],
-    showAndFilterFields: choice.only_and_filter_fields ? choice.only_and_filter_field : ['males', 'females'],
+    showAndFilterFields: choice.only_and_filter_fields ? choice.only_and_filter_fields : ['males', 'females'],
     rowDisplayField: choice.row_display_field || `${choice.value}_name`.replace(/-/g, "_"),
   }))
 
@@ -101,12 +101,20 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
     // Should check if value macthes before keeping the display name
     this.subscription = this.actions$.
       pipe(ofActionSuccessful(NextRoute)).subscribe(res => {
-        console.log("Results are")
-        console.log(res)
+        // console.log("Results are")
+        // console.log(res)
         const payload = res.payload
         this.router.navigate([`/${payload.url}/`], { queryParams: payload.queryParams })
 
       })
+    // const ubs = this.actions$.
+    //   pipe(ofActionCompleted(NextRoute)).subscribe(res => {
+    //     console.log("Completed are")
+    //     console.log(res)
+    //     // this.router.navigate([`/${payload.url}/`], { queryParams: payload.queryParams })
+    //     // ubs.unsubscribe()
+    //   })
+
     this.queryParamSub = this.activatedRoute.queryParams.subscribe(params => {
       this.queryParams = params || {}
     });

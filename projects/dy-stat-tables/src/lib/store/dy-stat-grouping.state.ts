@@ -2,12 +2,13 @@ import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { DataGroupingModel, QueryParamModel, TableHeaderModel, TableModel, TableStateModel } from "./dy-stat-tables.models";
 import { compose, updateItem, iif, insertItem, patch } from '@ngxs/store/operators';
-import { InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow } from "./dy-stat-tables.actions";
+import { InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow, UpdateColumn } from "./dy-stat-tables.actions";
 import { getHeaderTitle } from "../stats-tables.utils";
-import { tap } from "rxjs/operators";
+import { concatMap, map, mergeMap, tap } from "rxjs/operators";
 import { StatsTableService } from "../stats-table.service";
 import { Md5 } from 'ts-md5';
 import { StatsTablesState } from "./dy-stat-tables.state";
+import { Observable } from "rxjs";
 
 const SHOW_AND_FILTER_FIELD_NAME = 'only_and_filter_field'
 const defaultState = {
@@ -129,8 +130,9 @@ export class TablesState {
 
     private _getQueryParamsMap(queryParams: QueryParamModel[]): any {
         const params: any = {}
-        queryParams.forEach(param => {
-            params[param.name] = param.value
+        queryParams.slice().forEach(param => {
+            const value = queryParams.filter(h => h.name == param.name).map(h => h.value)
+            params[param.name] = value.length == 1 ? value[0] : value
         })
         return params
     }
@@ -157,9 +159,52 @@ export class TablesState {
             currentGrouping.currentFilterDisplayValue = queryParamDisplayValue
             const newheaders = this._appendShowAndOnlyParams(header, [...currentQueryParams, nextLevelQueryParam])
             return ctx.dispatch(new NextRoute({ url: `/${nextGrouping.name}`, queryParams: this._getQueryParamsMap(newheaders) }))
+
         }
+
         return undefined
     }
+
+    private _getCurrentTableHeaders() {
+        return this.store.selectSnapshot(TablesState.headers);
+    }
+
+    @Action(UpdateColumn)
+    updateColumn(ctx: StateContext<TableStateModel>, { payload }: UpdateColumn) {
+        const state = ctx.getState()
+        const currentGrouping = this._getSelectedGrouping()
+        const header = payload.header
+        const isAShowOnlyField = currentGrouping?.showAndFilterFields.includes(header.name)
+        const currentHeaders = new Set(this._getCurrentTableHeaders()?.map(h => h.name))
+        // If it's not a onlyAndFilterField Ignore
+        if (!isAShowOnlyField) return
+        if (!currentGrouping) return
+
+        // Compare the current headers to the showOnly Headers
+
+        const allOnlyFiterFieldsPresent = currentGrouping?.showAndFilterFields.every(header => currentHeaders.has(header))
+        console.log(`Has every headr ${allOnlyFiterFieldsPresent}`)
+        // If already an inactive header, remove or append the header and refresh
+        if (allOnlyFiterFieldsPresent) {
+            // If header is inactive
+            // Create a showAndFilterQueryFor the other fields 
+            const newHeaders: QueryParamModel[] = currentGrouping.showAndFilterFields.filter(h => h != header.name).map(h => ({
+                name: SHOW_AND_FILTER_FIELD_NAME,
+                value: h
+            }))
+            currentGrouping.hiddenQueryParams?.concat(newHeaders)
+        } else {
+            // Remove or add accordingly
+            if (header.active) {
+                currentGrouping?.visibleQueryParams?.push({ name: SHOW_AND_FILTER_FIELD_NAME, value: header.name })
+            } else {
+                currentGrouping.visibleQueryParams = currentGrouping.visibleQueryParams?.filter(q => !(q.value == header.name))
+            }
+        }
+        return ctx.dispatch(new NextRoute({ url: `/${currentGrouping?.name}`, queryParams: this._getQueryParamsMap(currentGrouping?.visibleQueryParams || []) }))
+            .pipe(mergeMap(res => ctx.dispatch(new RefreshPage())))
+    }
+
     private _appendShowAndOnlyParams(header: TableHeaderModel, queryParams: QueryParamModel[]): QueryParamModel[] {
         const currentGrouping = this._getSelectedGrouping()
         const isAShowOnlyField = currentGrouping?.showAndFilterFields.includes(header.name)
@@ -221,6 +266,11 @@ export class TablesState {
                             ...table,
                             ...result
                         }
+                    })
+                } else {
+                    ctx.patchState({
+                        isLoading: false,
+                        selectedTable: tableHash,
                     })
                 }
             }, error => {
