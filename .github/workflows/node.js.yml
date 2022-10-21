@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: MoE Kenya Stats Build
+    name: MoE Kenya Stat s Build
     runs-on: node
 
     strategy:
