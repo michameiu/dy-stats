@@ -28,7 +28,19 @@
     <p>{{profile$ | async}}</p> -->
     <router-outlet></router-outlet>
   </div>
-  <div *ngIf="! (isAuthenticated$ |async)">
-    <sistch-ngxs-login></sistch-ngxs-login>
+  <div class="center-grid" *ngIf="! (isAuthenticated$ |async)">
+    <div class="row align-middle">
+      <!-- <div class="col-3">
+
+      </div> -->
+      <div style="max-width: 500px" class="p-5 ">
+        <div class="p-5">
+          <h2 class="text-primary">Onekana Login</h2>
+
+        </div>
+        <sistch-ngxs-login></sistch-ngxs-login>
+      </div>
+      <!-- <div class="col-3"> </div> -->
+    </div>
   </div>
 </div>
