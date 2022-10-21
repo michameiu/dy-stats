@@ -27,9 +27,7 @@ const authConfig = {
     NgxsModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot(),
   ],
-  providers: [
-    { provide: 'groupings', useValue: {} },
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,13 +1,22 @@
 <div class="container">
   <div *ngIf="isAuthenticated$ |async">
     <nav class="navbar p-2 rounded navbar-expand-lg navbar-dark bg-primary justify-content-between mr-3 ">
-      <a class="navbar-brand " href="#"> Dynamic Stat Tables</a>
+      <a class="navbar-brand " href="#"> Onekana </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
+
         <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/attendances">Attendance</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/enrollment">Enrollment</a>
+          </li>
+
           <li class="nav-item">
             <a class="nav-link " href="javascript:void(0)" (click)="logout()">Logout </a>
           </li>

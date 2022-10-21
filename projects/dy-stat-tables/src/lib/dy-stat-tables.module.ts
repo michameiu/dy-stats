@@ -46,17 +46,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class DyStatTablesModule {
 
-  static forRoot(groupings: any): ModuleWithProviders<DyStatTablesModule> {
+  static forChild(groupings: any): ModuleWithProviders<DyStatTablesModule> {
     return {
       ngModule: DyStatTablesModule,
-      // providers: [
-      //   { provide: 'groupings', useValue: groupings || {} },
-      // ]
-    };
-  }
-  static forChild() {
-    return {
-      ngModule: DyStatTablesModule,
+      providers: [
+        { provide: 'groupings', useValue: groupings || {}, },
+      ]
     };
   }
 }
