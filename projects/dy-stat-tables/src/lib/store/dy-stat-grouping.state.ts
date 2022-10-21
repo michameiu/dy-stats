@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { DataGroupingModel, QueryParamModel, TableHeaderModel, TableModel, TableStateModel } from "./dy-stat-tables.models";
 import { compose, updateItem, iif, insertItem, patch } from '@ngxs/store/operators';
-import { InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow, UpdateColumn } from "./dy-stat-tables.actions";
+import { GoToGrouping, InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow, UpdateColumn, UpdateRowDisplayValue } from "./dy-stat-tables.actions";
 import { getHeaderTitle } from "../stats-tables.utils";
 import { concatMap, map, mergeMap, tap } from "rxjs/operators";
 import { StatsTableService } from "../stats-table.service";
@@ -100,6 +100,9 @@ export class TablesState {
     private _getSelectedGrouping() {
         return this.store.selectSnapshot(StatsTablesState.selectedGrouping);
     }
+    private _getPreviousGrouping() {
+        return this.store.selectSnapshot(StatsTablesState.prevGrouping);
+    }
 
     @Action(SelectTable)
     selectTable(ctx: StateContext<TableStateModel>, action: SelectTable) {
@@ -113,7 +116,7 @@ export class TablesState {
         if (selectedGrouping) {
             // Md5.hashStr('blah blah blah')
             const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
-            console.debug(`Table Hash`, tableHash)
+            // console.debug(`Table Hash`, tableHash)
             const selectedTable = state.selectedTable
             ctx.dispatch(new RefreshPage())
             return null
@@ -150,7 +153,10 @@ export class TablesState {
         const queryParamValue = this._getRowValue(row, 'value')
         const currentGrouping = this._getSelectedGrouping()
         const nextGrouping = this._getNextGrouping(state)
+        if (!currentGrouping || !nextGrouping) return
 
+        const rowDisplayValue = this._getRowValue(row, currentGrouping?.rowDisplayField || "value")
+        ctx.dispatch(new UpdateRowDisplayValue({ groupingId: nextGrouping.name, value: rowDisplayValue }))
 
         if (nextGrouping && currentGrouping) {
             const queryParamDisplayValue = this._getRowValue(row, currentGrouping.displayName)
@@ -163,6 +169,16 @@ export class TablesState {
         }
 
         return undefined
+    }
+    @Action(GoToGrouping)
+    goToGrouping(ctx: StateContext<TableStateModel>, { payload }: GoToGrouping) {
+        // console.log(payload)
+        // selectedGrouping: payload.selectedGrouping,
+        const groupings = this.store.selectSnapshot(StatsTablesState.groupings)
+        const nextGrouping = groupings.find(gr => gr.name == payload.groupingId)
+        if (!nextGrouping) return
+        // console.log(nextGrouping)
+        return ctx.dispatch(new NextRoute({ url: `/${nextGrouping.name}`, queryParams: this._getQueryParamsMap(nextGrouping.visibleQueryParams || []) }))
     }
 
     private _getCurrentTableHeaders() {
@@ -208,11 +224,11 @@ export class TablesState {
     private _appendShowAndOnlyParams(header: TableHeaderModel, queryParams: QueryParamModel[]): QueryParamModel[] {
         const currentGrouping = this._getSelectedGrouping()
         const isAShowOnlyField = currentGrouping?.showAndFilterFields.includes(header.name)
-        console.log(`Clicked a isSHowONlyField ${header.name} ${isAShowOnlyField}`)
+        // console.log(`Clicked a isSHowONlyField ${header.name} ${isAShowOnlyField}`)
         if (!isAShowOnlyField) return queryParams
         queryParams = queryParams.filter(q => q.name != SHOW_AND_FILTER_FIELD_NAME)
         queryParams.push({ name: SHOW_AND_FILTER_FIELD_NAME, value: header.name })
-        console.log(queryParams)
+        // console.log(queryParams)
         return queryParams
     }
 
@@ -222,6 +238,24 @@ export class TablesState {
         if (!selectedGrouping)
             return
         return this._getData(ctx, selectedGrouping)
+    }
+
+    private _updateSelectedGroupingFilterDisplay(row: any | undefined, ctx: StateContext<TableStateModel>) {
+        const currentGrouping = this._getSelectedGrouping()
+        const prevGrouping = this._getPreviousGrouping()
+        // console.log(currentGrouping, prevGrouping)
+        if (!row || !currentGrouping || !prevGrouping) return
+        const prevFilterName = prevGrouping.filterName
+        // console.log(prevFilterName)
+        if (currentGrouping.visibleQueryParams?.map(h => h.name).includes(prevFilterName)) {
+            if (!currentGrouping.currentFilterDisplayValue) {
+                // const rowDisplayValue = this._getRowValue(row, currentGrouping?.rowDisplayField || "value")
+                const queryParam = currentGrouping.visibleQueryParams.find(q => q.name == prevFilterName)
+                if (queryParam)
+                    ctx.dispatch(new UpdateRowDisplayValue({ groupingId: currentGrouping.name, value: `${prevFilterName}=${queryParam?.value}` }))
+            }
+        }
+
     }
 
 
@@ -267,6 +301,8 @@ export class TablesState {
                             ...result
                         }
                     })
+                    if (result.results)
+                        this._updateSelectedGroupingFilterDisplay(result.results[0], ctx)
                 } else {
                     ctx.patchState({
                         isLoading: false,

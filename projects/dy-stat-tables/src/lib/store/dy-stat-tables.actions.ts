@@ -24,6 +24,16 @@ export class SelectSort {
     constructor(public payload: { orderBy: string, order: SortDirection }) { }
 }
 
+export class GoToGrouping {
+    static readonly type = '[StatsTable] Go To Grouping';
+    constructor(public payload: { groupingId: string }) { }
+}
+
+export class UpdateRowDisplayValue {
+    static readonly type = '[StatsTable] Update Row Display Value';
+    constructor(public payload: { groupingId: string, value: string | number }) { }
+
+}
 
 export class SelectTable {
     // Get the selected grouping from state

@@ -1,7 +1,9 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <!-- <li (click)="selectGroup(group)" *ngFor="let group of groupings$|async" class="breadcrumb-item "><a
-                href="javascript:void(0)">{{group.displayName}}</a></li> -->
+        <li (click)="selectGroup(group)" *ngFor="let group of groupings$|async" class="breadcrumb-item "><a
+                href="javascript:void(0)">{{group.displayName}} <small
+                    *ngIf="group.currentFilterDisplayValue">({{group.currentFilterDisplayValue}})</small></a>
+        </li>
     </ol>
 </nav>
 <div>

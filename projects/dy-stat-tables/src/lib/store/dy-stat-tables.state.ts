@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext } from "@ngxs/store";
-import { InitStatState, NextRoute, RefreshPage, SelectSort, SelectTable, SelectTableRow } from "./dy-stat-tables.actions";
+import { GoToGrouping, InitStatState, NextRoute, RefreshPage, SelectSort, SelectTable, SelectTableRow, UpdateRowDisplayValue } from "./dy-stat-tables.actions";
 import { DataGroupingModel, QueryParamModel, StatStateModel, TableHeaderModel, TableModel } from "./dy-stat-tables.models";
 import { compose, updateItem, iif, insertItem, patch } from '@ngxs/store/operators';
 import { StatsTableService } from "../stats-table.service";
@@ -41,6 +41,16 @@ export class StatsTablesState {
         if (currentGrouping) {
             const currentIndex = state.groupings.map(gr => gr.name).indexOf(state.selectedGrouping || "")
             const nextIndex = currentIndex + 1
+            return state.groupings[nextIndex]
+        }
+        return undefined
+    }
+    @Selector()
+    static prevGrouping(state: StatStateModel) {
+        const currentGrouping = state.groupings.find(gr => gr.name == state.selectedGrouping)
+        if (currentGrouping) {
+            const currentIndex = state.groupings.map(gr => gr.name).indexOf(state.selectedGrouping || "")
+            const nextIndex = currentIndex - 1
             return state.groupings[nextIndex]
         }
         return undefined
@@ -88,6 +98,19 @@ export class StatsTablesState {
     @Selector()
     static table(state: StatStateModel) {
         return undefined
+    }
+
+    @Action(UpdateRowDisplayValue)
+    updateRowDisplayValue(ctx: StateContext<StatStateModel>, { payload }: UpdateRowDisplayValue) {
+        const state = ctx.getState()
+        const grouping = state.groupings.find(gr => gr.name == payload.groupingId)
+        if (!grouping) return
+        grouping.currentFilterDisplayValue = payload.value
+        // console.log(grouping, payload.value)
+        ctx.setState(patch<StatStateModel>({
+            time: new Date().toLocaleString(),
+            groupings: updateItem<DataGroupingModel>(gr => gr?.name == grouping?.name, grouping)
+        }))
     }
 
     @Action(SelectSort)

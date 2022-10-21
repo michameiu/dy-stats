@@ -105,15 +105,7 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
         // console.log(res)
         const payload = res.payload
         this.router.navigate([`/${payload.url}/`], { queryParams: payload.queryParams })
-
       })
-    // const ubs = this.actions$.
-    //   pipe(ofActionCompleted(NextRoute)).subscribe(res => {
-    //     console.log("Completed are")
-    //     console.log(res)
-    //     // this.router.navigate([`/${payload.url}/`], { queryParams: payload.queryParams })
-    //     // ubs.unsubscribe()
-    //   })
 
     this.queryParamSub = this.activatedRoute.queryParams.subscribe(params => {
       this.queryParams = params || {}

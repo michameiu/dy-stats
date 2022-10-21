@@ -29,36 +29,36 @@ const filterOptions = {
                     },
                     {
                         value: "sub-county",
-                        display_name: "Sub County",
+                        display_name: "Sub Counties",
                         filter_name: "school_sub_county"
                     },
                     {
                         value: "school",
-                        display_name: "School",
+                        display_name: "Schools",
                     },
                     {
                         value: "year",
-                        display_name: "Year",
+                        display_name: "Years",
                         filter_name: "start_date"
                     },
                     {
                         value: "month",
-                        display_name: "Month",
+                        display_name: "Months",
                         filter_name: "start_date"
                     },
                     {
                         value: "day",
-                        display_name: "Day",
+                        display_name: "Days",
                         filter_name: "date"
                     },
                     {
                         value: "class",
-                        display_name: "Class",
+                        display_name: "Classes",
                         filter_name: "base_class"
                     },
                     {
                         value: "id",
-                        display_name: "No Grouping",
+                        display_name: "Learner's list",
                         filter_name: "",
                         only_and_filter_fields: []
                     },
