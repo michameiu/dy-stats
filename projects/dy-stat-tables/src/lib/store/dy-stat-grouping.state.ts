@@ -181,18 +181,18 @@ export class TablesState {
         if (!currentGrouping) return
 
         // Compare the current headers to the showOnly Headers
-
         const allOnlyFiterFieldsPresent = currentGrouping?.showAndFilterFields.every(header => currentHeaders.has(header))
-        console.log(`Has every headr ${allOnlyFiterFieldsPresent}`)
         // If already an inactive header, remove or append the header and refresh
-        if (allOnlyFiterFieldsPresent) {
+        const hasAnyOnlyFilterQueryParam = currentGrouping.visibleQueryParams?.some(h => h.name == SHOW_AND_FILTER_FIELD_NAME)
+        if (allOnlyFiterFieldsPresent && !hasAnyOnlyFilterQueryParam) {
             // If header is inactive
             // Create a showAndFilterQueryFor the other fields 
             const newHeaders: QueryParamModel[] = currentGrouping.showAndFilterFields.filter(h => h != header.name).map(h => ({
                 name: SHOW_AND_FILTER_FIELD_NAME,
                 value: h
             }))
-            currentGrouping.hiddenQueryParams?.concat(newHeaders)
+            currentGrouping.visibleQueryParams = currentGrouping.visibleQueryParams?.concat(newHeaders)
+            // console.log(currentGrouping.visibleQueryParams)
         } else {
             // Remove or add accordingly
             if (header.active) {
