@@ -39,4 +39,4 @@ jobs:
         run: npm run build-prod
 
       - name: Deploy to RequestAfrica
-        run: rsync -av -e ssh  -r dist/*  requestafricadev@request.africa:/home/requestafricadev/apps/onekana_stats
+        run: rsync -av -e ssh  -r dist/example/*  requestafricadev@request.africa:/home/requestafricadev/apps/onekana_stats
