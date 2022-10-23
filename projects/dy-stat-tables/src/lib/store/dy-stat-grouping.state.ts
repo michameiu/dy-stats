@@ -87,9 +87,16 @@ export class TablesState {
         return table?.results?.length
     }
 
-
-
-
+    @Selector()
+    static canExport(state: TableStateModel) {
+        let table = state[state.selectedTable || ""] as TableModel | undefined
+        return table?.canExport
+    }
+    @Selector()
+    static isExporting(state: TableStateModel) {
+        let table = state[state.selectedTable || ""] as TableModel | undefined
+        return table?.isExporting
+    }
 
     @Action(InitStatState)
     initState(ctx: StateContext<TableStateModel>, { payload }: InitStatState) {
@@ -125,9 +132,24 @@ export class TablesState {
     private _triggerExport(ctx: StateContext<TableStateModel>, selectedGrouping: DataGroupingModel) {
         const { url, queryParams } = this._getUrlHeaders(ctx, selectedGrouping)
         const allQueryParams = [...queryParams, { name: 'export', value: true }]
+        const state = ctx.getState()
+        const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
+        const table = state[tableHash] as TableModel
+        if (table)
+            ctx.patchState({
+                [tableHash]: { ...table, isExporting: true }
+            })
+
         return this.serv.getData<TableModel>(url, allQueryParams).pipe(
             tap((result: any) => {
                 console.log(result)
+                if (!state.selectedTable) return
+                const currentTable = state[state.selectedTable] as TableModel
+                if (currentTable) {
+                    ctx.patchState({
+                        [state.selectedTable]: { ...currentTable, canExport: false, isExporting: true }
+                    })
+                }
             }, error => {
                 console.log("Export failed")
                 console.log(error)
@@ -138,9 +160,10 @@ export class TablesState {
     @Action(TriggerExport)
     triggerExport(ctx: StateContext<TableStateModel>, { payload }: InitStatState) {
         const selectedGrouping = this._getSelectedGrouping()
-        if (selectedGrouping)
-            return this._triggerExport(ctx, selectedGrouping)
-        return null
+        if (!selectedGrouping) return
+
+        return this._triggerExport(ctx, selectedGrouping)
+
     }
 
     @Action(SelectTable)
@@ -305,6 +328,7 @@ export class TablesState {
         const hideHeaders = ['id', 'value']
         const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
         const table: TableModel = { id: tableHash, page: 1, grouping: selectedGrouping.name }
+        table.canExport = false
         ctx.patchState({ selectedTable: "", isLoading: true })
         return this.serv.getData<TableModel>(url, queryParams).pipe(
             tap((result: TableModel) => {
@@ -318,6 +342,7 @@ export class TablesState {
                             visible: currentGrouping?.showAndFilterFields.includes(header)
                         }
                     })
+                    table.canExport = true
 
                     if (table.headers == undefined) {
                         table.headers = newheaders

@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Navigate } from '@ngxs/router-plugin';
 import { Actions, ofActionCompleted, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { InitStatState, NextRoute, SelectTableRow } from './store/dy-stat-tables.actions';
+import { InitStatState, NextRoute, SelectTableRow, TriggerExport } from './store/dy-stat-tables.actions';
 import { filterOptions } from './options'
 import { DataGroupingModel, QueryParamModel, SortDirection, TableHeaderModel } from './store/dy-stat-tables.models';
 import { StatsTablesState } from './store/dy-stat-tables.state';
@@ -44,6 +44,8 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
   @Select(StatsTablesState.time) time$!: Observable<string>;
   @Select(StatsTablesState.showAndFilterFields) showAndFilterFields$!: Observable<string[]>;
   @Select(TablesState.hasData) hasData$!: Observable<boolean>;
+  @Select(TablesState.canExport) canExport$!: Observable<boolean>;
+  @Select(TablesState.isExporting) isExporting$!: Observable<boolean>;
   @Select(TablesState.isLoading) isLoading$!: Observable<boolean>;
   @Select(StatsTablesState.drillDownSteps) drillDownSteps$!: Observable<string[]>;
   @Select(TablesState.currentTable) currentTable$!: Observable<any>;
@@ -65,6 +67,9 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
     this.subscription?.unsubscribe()
     this.routeSub?.unsubscribe()
     this.queryParamSub?.unsubscribe()
+  }
+  export() {
+    this.store.dispatch(new TriggerExport())
   }
 
   getBasePathNames(): string[] {

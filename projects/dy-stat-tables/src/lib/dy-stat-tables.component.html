@@ -1,11 +1,17 @@
 <h2>{{name}} </h2><small>{{time$|async}}</small>
 <div class="row">
-    <div class="col-8">
+    <div class="col-{{(canExport$|async)?6:8}}">
         <sistch-stats-breadcrumb *ngIf="!(isLoading$|async)"></sistch-stats-breadcrumb>
     </div>
-    <div class="col">
+    <div class="col-4">
         <sistch-stats-lib-sort></sistch-stats-lib-sort>
     </div>
+    <div *ngIf="canExport$|async" class="col-2">
+        <span></span><br>
+        <button (click)="export()" [disabled]="isExporting$|async" class="btn btn-sm btn-primary">
+            {{(isExporting$|async)?"Exporting...":"Export Summary"}} </button>
+    </div>
+
 </div>
 
 <div class="table-responsive">

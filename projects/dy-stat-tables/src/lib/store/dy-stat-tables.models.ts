@@ -33,8 +33,10 @@ export interface TableModel {
     count?: number
     prev?: string
     results?: any[]
+    canExport?: boolean
     grouping: string,
     cacheValue?: string,
+    isExporting?: boolean
 
 }
 
