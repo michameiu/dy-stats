@@ -35,6 +35,12 @@ export class UpdateRowDisplayValue {
 
 }
 
+export class TriggerExport {
+    static readonly type = '[StatsTable] Trigger Export';
+    constructor() { }
+
+}
+
 export class SelectTable {
     // Get the selected grouping from state
     // Get the selected table(hash) from grouping

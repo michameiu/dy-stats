@@ -6,7 +6,7 @@ import { DataGroupingModel } from 'dist/dy-stat-tables';
 import { Observable } from 'rxjs';
 
 import { filterOptions } from './options'
-
+import 'bootstrap';
 
 @Component({
   selector: 'app-root',

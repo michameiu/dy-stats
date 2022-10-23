@@ -1,7 +1,7 @@
 export interface QueryParamModel {
     name: string,
     displayName?: string // Contain the display Value eg. County Name for a county filter
-    value: string | number
+    value: string | number | boolean
 }
 
 

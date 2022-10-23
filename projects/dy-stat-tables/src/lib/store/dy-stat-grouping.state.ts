@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { DataGroupingModel, QueryParamModel, TableHeaderModel, TableModel, TableStateModel } from "./dy-stat-tables.models";
 import { compose, updateItem, iif, insertItem, patch } from '@ngxs/store/operators';
-import { GoToGrouping, InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow, UpdateColumn, UpdateRowDisplayValue } from "./dy-stat-tables.actions";
+import { GoToGrouping, InitStatState, NextRoute, RefreshPage, SelectTable, SelectTableRow, TriggerExport, UpdateColumn, UpdateRowDisplayValue } from "./dy-stat-tables.actions";
 import { getHeaderTitle } from "../stats-tables.utils";
 import { concatMap, map, mergeMap, tap } from "rxjs/operators";
 import { StatsTableService } from "../stats-table.service";
@@ -102,6 +102,45 @@ export class TablesState {
     }
     private _getPreviousGrouping() {
         return this.store.selectSnapshot(StatsTablesState.prevGrouping);
+    }
+
+    private _getUrlHeaders(ctx: StateContext<TableStateModel>, selectedGrouping: DataGroupingModel): { url: string, queryParams: QueryParamModel[] } {
+        const url = selectedGrouping.url
+        const allHeaders = selectedGrouping?.visibleQueryParams?.slice() || []
+        if (selectedGrouping.sort) {
+            const sortByField = selectedGrouping.sort.orderBy
+            const hasAnyOnlyFilterQueryParam = selectedGrouping.visibleQueryParams?.some(h => h.name == SHOW_AND_FILTER_FIELD_NAME)
+            const queryParamInOnlyFilterFields = selectedGrouping.visibleQueryParams?.some(h => h.name == SHOW_AND_FILTER_FIELD_NAME && h.value == sortByField)
+            if (!hasAnyOnlyFilterQueryParam || queryParamInOnlyFilterFields) {
+                allHeaders.push({ name: 'order_by', value: selectedGrouping.sort.orderBy })
+                allHeaders.push({ name: 'order', value: selectedGrouping.sort.order })
+            } else {
+                console.log("COuntl not send order by")
+            }
+
+        }
+        return { url: url, queryParams: allHeaders.slice() }
+    }
+
+    private _triggerExport(ctx: StateContext<TableStateModel>, selectedGrouping: DataGroupingModel) {
+        const { url, queryParams } = this._getUrlHeaders(ctx, selectedGrouping)
+        const allQueryParams = [...queryParams, { name: 'export', value: true }]
+        return this.serv.getData<TableModel>(url, allQueryParams).pipe(
+            tap((result: any) => {
+                console.log(result)
+            }, error => {
+                console.log("Export failed")
+                console.log(error)
+            })
+        );
+    }
+
+    @Action(TriggerExport)
+    triggerExport(ctx: StateContext<TableStateModel>, { payload }: InitStatState) {
+        const selectedGrouping = this._getSelectedGrouping()
+        if (selectedGrouping)
+            return this._triggerExport(ctx, selectedGrouping)
+        return null
     }
 
     @Action(SelectTable)
@@ -260,21 +299,14 @@ export class TablesState {
 
 
     private _getData(ctx: StateContext<TableStateModel>, selectedGrouping: DataGroupingModel) {
-        const url = selectedGrouping.url
+        const { url, queryParams } = this._getUrlHeaders(ctx, selectedGrouping)
         const state = ctx.getState()
         const currentGrouping = this._getSelectedGrouping()
         const hideHeaders = ['id', 'value']
         const tableHash = this._getTableHash(selectedGrouping.visibleQueryParams || [])
         const table: TableModel = { id: tableHash, page: 1, grouping: selectedGrouping.name }
         ctx.patchState({ selectedTable: "", isLoading: true })
-
-        const allHeaders = selectedGrouping?.visibleQueryParams?.slice() || []
-        if (selectedGrouping.sort) {
-            allHeaders.push({ name: 'order_by', value: selectedGrouping.sort.orderBy })
-            allHeaders.push({ name: 'order', value: selectedGrouping.sort.order })
-        }
-
-        return this.serv.getData<TableModel>(url, allHeaders).pipe(
+        return this.serv.getData<TableModel>(url, queryParams).pipe(
             tap((result: TableModel) => {
                 if (result.results?.length || 0 > 0) {
                     const row = result.results ? result.results[0] : {}

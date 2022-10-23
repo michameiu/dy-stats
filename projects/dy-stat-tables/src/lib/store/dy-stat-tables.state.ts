@@ -5,6 +5,7 @@ import { DataGroupingModel, QueryParamModel, StatStateModel, TableHeaderModel, T
 import { compose, updateItem, iif, insertItem, patch } from '@ngxs/store/operators';
 import { StatsTableService } from "../stats-table.service";
 import { getHeaderTitle } from "../stats-tables.utils";
+
 const defaultState = {
     url: "",
     name: "None Selected",

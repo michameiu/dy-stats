@@ -23,41 +23,54 @@ const filterOptions = {
                 "choices": [
                     {
                         value: "county",
-                        display_name: "County",
+                        display_name: "Counties",
                         filter_name: "school_county",
                         row_display_field: "county_name"
                     },
                     {
                         value: "sub-county",
-                        display_name: "Sub County",
+                        display_name: "Sub Counties",
                         filter_name: "school_sub_county"
                     },
                     {
                         value: "school",
-                        display_name: "School",
+                        display_name: "Schools",
+                    },
+                    {
+                        value: "year",
+                        display_name: "Years",
+                        filter_name: "start_date"
+                    },
+                    {
+                        value: "month",
+                        display_name: "Months",
+                        filter_name: "start_date"
+                    },
+                    {
+                        value: "day",
+                        display_name: "Days",
+                        filter_name: "date"
                     },
                     {
                         value: "class",
-                        display_name: "Class",
+                        display_name: "Classes",
                         filter_name: "base_class"
                     },
                     {
                         value: "id",
-                        display_name: "No Grouping",
-                        filter_name: ""
+                        display_name: "Learner's list",
+                        filter_name: "",
+                        only_and_filter_fields: []
+                    },
+                    {
+                        value: "student-status",
+                        display_name: "Status",
+                        filter_name: 'status'
                     },
 
                     {
                         value: "special-need",
                         display_name: "Special Needs"
-                    },
-                    {
-                        value: "student-status",
-                        display_name: "Status"
-                    },
-                    {
-                        value: "gender",
-                        display_name: "Gender"
                     },
                     {
                         value: "age",
