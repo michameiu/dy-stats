@@ -1,5 +1,9 @@
 <h2>{{name}} </h2><small>{{time$|async}}</small>
 <div class="row">
+    <app-myform [formItems]="filterOptions" submitButtonText="Search" (onValidatedData)="onValidatedData($event)"
+        componentType="filter" [isValidationOnly]="isValidationOnly" formActionName="Search" submitButtonText=""
+        [formGroupOrder]="formGroupOrder">
+    </app-myform>
     <div class="col-{{(canExport$|async)?6:8}}">
         <sistch-stats-breadcrumb *ngIf="!(isLoading$|async)"></sistch-stats-breadcrumb>
     </div>

@@ -9,7 +9,7 @@ import { AppComponent } from './app.component';
 import { DataGroupingModel } from '../../../../dist/dy-stat-tables'
 import { filterOptions } from './options'
 
-const authConfig = {
+export const authConfig = {
   APIEndpoint: "https://api.onekana.naconek.ke",
   version: "api/v1",
   clientId: "MkNyGrkTC8nr2eq6t9xrNW7SixjWR97AwW0ZlFHc",

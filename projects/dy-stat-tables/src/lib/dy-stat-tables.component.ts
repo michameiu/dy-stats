@@ -10,7 +10,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Subscription } from 'rxjs';
 import { TablesState } from './store/dy-stat-grouping.state';
 import { Logout } from '@sisitech/ngxs-auth';
-import { getHeaderTitle } from './stats-tables.utils';
+import { getHeaderTitle, parseFilters, urlQueryParamsToQueryParamModel } from './stats-tables.utils';
 @Component({
   selector: 'sistch-dy-stat-tables',
   templateUrl: 'dy-stat-tables.component.html',
@@ -56,13 +56,20 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
   dummyData: any = ["", "", "", "", "", "", "", "", ""]
   groupingId: string = ""
   queryParams: any
+  isValidationOnly = true
   subscription?: Subscription
   routeSub?: Subscription
   queryParamSub?: Subscription
+  filterParams: QueryParamModel[] = []
   constructor(private store: Store,
     private actions$: Actions,
     @Inject('groupings') private groupings: DataGroupingModel[],
-    private activatedRoute: ActivatedRoute, private router: Router) { }
+    @Inject('myformConfig') private myformConfig: any,
+    @Inject('filterOptions') public filterOptions: any,
+    @Inject('formGroupOrder') public formGroupOrder: any,
+    private activatedRoute: ActivatedRoute, private router: Router) {
+    console.log(myformConfig, this.filterOptions)
+  }
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
     this.routeSub?.unsubscribe()
@@ -70,6 +77,13 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
   }
   export() {
     this.store.dispatch(new TriggerExport())
+  }
+  onValidatedData(data: any) {
+    console.log(data)
+    const { filters, descriptions } = parseFilters(data)
+    // console.log(filters)
+    this.filterParams = urlQueryParamsToQueryParamModel(filters)
+    this.ngOnInit()
   }
 
   getBasePathNames(): string[] {
@@ -108,7 +122,6 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
     });
     // console.log("Something is wrong...")
     this.routeSub = this.activatedRoute.paramMap.subscribe(params => {
-      let queryParams: QueryParamModel[] = []
 
       this.groupingId = params.get("routing") || ""
       //Set the table and refresh & Check if any
@@ -120,18 +133,11 @@ export class DyStatTablesComponent implements OnInit, OnDestroy {
         this.router.navigate([...this.getBasePathNames(), `${this.groupings[0].name}`], { queryParams: this.queryParams })
         return
       }
-      for (let key in this.queryParams) {
-        const value = this.queryParams[key]
-        if (typeof value == "object" && Array.isArray(value)) {
-          queryParams = [...queryParams, ...value.map(v => ({ name: key, value: v }))]
-        } else {
-          queryParams.push({ name: key, value: value })
+      let queryParams: QueryParamModel[] = urlQueryParamsToQueryParamModel(this.queryParams)
 
-        }
-      }
       // console.log(queryParams)
       //Set the table and refresh & Check if any
-      this.store.dispatch(new InitStatState({ groupings: this.groupings, queryParams: queryParams, selectedGrouping: this.groupingId, showAndFilterFields: [] }))
+      this.store.dispatch(new InitStatState({ groupings: this.groupings, queryParams: [...queryParams, ...this.filterParams], selectedGrouping: this.groupingId, showAndFilterFields: [] }))
     });
 
 

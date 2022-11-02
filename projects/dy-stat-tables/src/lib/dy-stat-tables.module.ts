@@ -13,6 +13,9 @@ import { TablesState } from './store/dy-stat-grouping.state';
 import { StatsTablesState } from './store/dy-stat-tables.state';
 import { SortComponent } from './sort/sort.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MyformModule } from '@sisitech/myform';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from '@sisitech/ngxs-auth';
 
 
 
@@ -32,7 +35,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NgxsModule.forFeature([StatsTablesState, TablesState]),
     // NgxsRouterPluginModule.forRoot({stor})
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MyformModule
   ],
   exports: [
     DyStatTablesComponent,
@@ -41,16 +45,27 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MypaginationComponent,
     MycelldisplayComponent,
     ActionViewComponent,
+    MyformModule
     // DyStatTablesRoutingModule,
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ]
 })
 export class DyStatTablesModule {
 
-  static forChild(groupings: any): ModuleWithProviders<DyStatTablesModule> {
+  static forChild(config: { groupings: any, formGroupOrder: any[], myformConfig: any, filterOptions: any }): ModuleWithProviders<DyStatTablesModule> {
     return {
       ngModule: DyStatTablesModule,
       providers: [
-        { provide: 'groupings', useValue: groupings || {}, },
+        { provide: 'groupings', useValue: config.groupings || {}, },
+        { provide: 'myformConfig', useValue: config.myformConfig || {}, },
+        { provide: 'filterOptions', useValue: config.filterOptions || {}, },
+        { provide: 'formGroupOrder', useValue: config.formGroupOrder || [], },
       ]
     };
   }

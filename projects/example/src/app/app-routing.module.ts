@@ -1,8 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { utilsConfigureLazyModule } from '../../../../dist/dy-stat-tables';
+import { authConfig } from './app.module';
+import { attendanceFilterOptions } from './attendance_options';
+import { enrollmentFilterOptions } from './enrollment_options';
 import { filterOptions } from './options';
 const showAndFilterFields = ['present_males', 'present_females', 'absent_males', 'absent_females']
+
+
 
 const attendanceGroupings = filterOptions.actions.POST.grouping.choices
   .map((choice: any) => ({
@@ -38,13 +43,29 @@ const routes: Routes = [
   {
     path: 'attendances',
     loadChildren: () => {
-      return import('../../../../dist/dy-stat-tables').then(m => utilsConfigureLazyModule(m.DyStatTablesModule.forChild(attendanceGroupings)))
+      return import('../../../../dist/dy-stat-tables')
+        .then(m => utilsConfigureLazyModule(
+          m.DyStatTablesModule
+            .forChild({
+              groupings: attendanceGroupings, myformConfig: authConfig, filterOptions: attendanceFilterOptions, formGroupOrder: [
+                ['school_county', 'school_sub_county', 'gender'],
+                ['school', 'base_class', 'status'],
+                ['start_date', 'end_date']
+              ]
+            })))
     }
   },
   {
     path: 'enrollment',
     loadChildren: () => {
-      return import('../../../../dist/dy-stat-tables').then(m => utilsConfigureLazyModule(m.DyStatTablesModule.forChild(enrollmentGroupings)))
+      return import('../../../../dist/dy-stat-tables').then(m => utilsConfigureLazyModule(m.DyStatTablesModule
+        .forChild({
+          groupings: enrollmentGroupings,
+          myformConfig: authConfig, filterOptions: enrollmentFilterOptions, formGroupOrder: [
+            ['school_county', 'school_sub_county', 'gender'],
+            ['school', 'base_class', 'status']
+          ],
+        })))
     }
   },
   {
